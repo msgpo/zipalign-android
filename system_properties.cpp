@@ -47,6 +47,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/un.h>
+//hack around redefinition warnings from including both platform/android-21 xattr headers
+#undef XATTR_CREATE
+#undef XATTR_REPLACE
 #include <sys/xattr.h>
 
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
