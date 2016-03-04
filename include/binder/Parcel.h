@@ -23,6 +23,10 @@
 #include <cutils/native_handle.h>
 #include <nativehelper/ScopedFd.h>
 #include <utils/Errors.h>
+//hack around redefinition warnings from including both platform/android-21 stdatomic and libc++
+#undef _Atomic
+#undef ATOMIC_VAR_INIT
+#undef ATOMIC_FLAG_INIT
 #include <utils/RefBase.h>
 #include <utils/String16.h>
 #include <utils/Vector.h>
