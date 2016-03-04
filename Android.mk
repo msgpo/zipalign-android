@@ -4,35 +4,30 @@
 # Zip alignment tool
 #
 
-LOCAL_PATH:= $(call my-dir)
+LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
+
+LOCAL_MODULE := zipalign
 
 LOCAL_SRC_FILES := \
 	ZipAlign.cpp \
 	ZipEntry.cpp \
 	ZipFile.cpp
 
-LOCAL_C_INCLUDES += external/zlib \
-	external/zopfli/src
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/include \
+	$(LOCAL_PATH)/zlib \
+	$(LOCAL_PATH)/zopfli/src \
+	$(LOCAL_PATH)/zopfli/src/zopfli
 
-LOCAL_STATIC_LIBRARIES := \
-	libandroidfw \
-	libutils \
-	libcutils \
-	liblog \
-	libzopfli
+LOCAL_LDFLAGS += \
+	$(LOCAL_PATH)/obj/local/armeabi/libandroidfw.a \
+	$(LOCAL_PATH)/obj/local/armeabi/libutils.a \
+	$(LOCAL_PATH)/obj/local/armeabi/libcutils.a \
+	$(LOCAL_PATH)/obj/local/armeabi/liblog.a  \
+	$(LOCAL_PATH)/obj/local/armeabi/libz.a  \
+	$(LOCAL_PATH)/obj/local/armeabi/libzopfli.a
 
-LOCAL_LDLIBS_linux += -lrt
-
-LOCAL_STATIC_LIBRARIES_windows += libz
-LOCAL_LDLIBS_linux += -lz
-LOCAL_LDLIBS_darwin += -lz
-
-ifneq ($(strip $(BUILD_HOST_static)),)
-LOCAL_LDLIBS += -lpthread
-endif # BUILD_HOST_static
-
-LOCAL_MODULE := zipalign
-LOCAL_MODULE_HOST_OS := darwin linux windows
-
-include $(BUILD_HOST_EXECUTABLE)
+LOCAL_CFLAGS += -std=gnu++11
+LOCAL_LDFLAGS += -static
+include $(BUILD_EXECUTABLE)
