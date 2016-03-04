@@ -1980,7 +1980,7 @@ int ResTable_config::diff(const ResTable_config& o) const {
     if (version != o.version) diffs |= CONFIG_VERSION;
     if ((screenLayout & MASK_LAYOUTDIR) != (o.screenLayout & MASK_LAYOUTDIR)) diffs |= CONFIG_LAYOUTDIR;
     if ((screenLayout & ~MASK_LAYOUTDIR) != (o.screenLayout & ~MASK_LAYOUTDIR)) diffs |= CONFIG_SCREEN_LAYOUT;
-    if ((screenLayout2 & MASK_SCREENROUND) != (o.screenLayout2 & MASK_SCREENROUND)) diffs |= CONFIG_SCREEN_ROUND;
+//hack    if ((screenLayout2 & MASK_SCREENROUND) != (o.screenLayout2 & MASK_SCREENROUND)) diffs |= CONFIG_SCREEN_ROUND;
     if (uiMode != o.uiMode) diffs |= CONFIG_UI_MODE;
     if (smallestScreenWidthDp != o.smallestScreenWidthDp) diffs |= CONFIG_SMALLEST_SCREEN_SIZE;
     if (screenSizeDp != o.screenSizeDp) diffs |= CONFIG_SCREEN_SIZE;
@@ -2802,12 +2802,13 @@ String8 ResTable_config::toString() const {
     if ((screenLayout2&MASK_SCREENROUND) != 0) {
         if (res.size() > 0) res.append("-");
         switch (screenLayout2&MASK_SCREENROUND) {
-            case SCREENROUND_NO:
-                res.append("notround");
-                break;
-            case SCREENROUND_YES:
-                res.append("round");
-                break;
+/*hack            case SCREENROUND_NO:
+ *                res.append("notround");
+ *                break;
+ *            case SCREENROUND_YES:
+ *                res.append("round");
+ *                break;
+ */
             default:
                 res.appendFormat("screenRound=%d", dtohs(screenLayout2&MASK_SCREENROUND));
                 break;
