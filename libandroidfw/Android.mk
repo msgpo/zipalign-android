@@ -37,20 +37,6 @@ deviceSources := \
 
 hostSources := $(commonSources)
 
-# For the host
-# =====================================================
-include $(CLEAR_VARS)
-
-LOCAL_MODULE:= libandroidfw
-LOCAL_MODULE_HOST_OS := darwin linux windows
-LOCAL_CFLAGS += -DSTATIC_ANDROIDFW_FOR_TOOLS
-LOCAL_CFLAGS += -Wall -Werror -Wunused -Wunreachable-code
-LOCAL_SRC_FILES:= $(hostSources)
-LOCAL_C_INCLUDES := external/zlib
-
-include $(BUILD_HOST_STATIC_LIBRARY)
-
-
 # For the device
 # =====================================================
 
@@ -59,7 +45,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE:= libandroidfw
 LOCAL_SRC_FILES:= $(deviceSources)
 LOCAL_C_INCLUDES := \
-    system/core/include
+    $(LOCAL_PATH)/../include
 LOCAL_STATIC_LIBRARIES := libziparchive libbase
 LOCAL_SHARED_LIBRARIES := \
     libbinder \
@@ -68,10 +54,9 @@ LOCAL_SHARED_LIBRARIES := \
     libutils \
     libz
 
-LOCAL_CFLAGS += -Wall -Werror -Wunused -Wunreachable-code
+LOCAL_CFLAGS += -std=gnu++11 -Wunused -Wunreachable-code
 
-include $(BUILD_SHARED_LIBRARY)
-
+include $(BUILD_STATIC_LIBRARY)
 
 # Include subdirectory makefiles
 # ============================================================
