@@ -10,15 +10,7 @@ zopfli_files := \
     src/zopfli/zlib_container.c src/zopfli/zopfli_lib.c
 
 LOCAL_MODULE := libzopfli
-LOCAL_MODULE_HOST_OS := darwin linux windows
 LOCAL_CFLAGS += -O2
 LOCAL_SRC_FILES := $(zopfli_files)
 LOCAL_MULTILIB := both
-include $(BUILD_HOST_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := libzopfli
-LOCAL_CFLAGS += -O2
-LOCAL_SRC_FILES := $(zopfli_files)
-LOCAL_MULTILIB := both
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
