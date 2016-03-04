@@ -29,52 +29,18 @@ liblog_host_sources := $(liblog_sources) fake_log_device.c event.logtags
 liblog_target_sources := $(liblog_sources) event_tag_map.c
 liblog_target_sources += log_time.cpp log_is_loggable.c logprint.c log_read.c
 
-# Shared and static library for host
-# ========================================================
-LOCAL_MODULE := liblog
-LOCAL_SRC_FILES := $(liblog_host_sources)
-# some files must not be compiled when building against Mingw
-# they correspond to features not used by our host development tools
-# which are also hard or even impossible to port to native Win32
-LOCAL_SRC_FILES_darwin := event_tag_map.c
-LOCAL_SRC_FILES_linux := event_tag_map.c
-LOCAL_SRC_FILES_windows := uio.c
-LOCAL_CFLAGS := -DFAKE_LOG_DEVICE=1 -Werror $(liblog_cflags)
-LOCAL_MULTILIB := both
-LOCAL_MODULE_HOST_OS := darwin linux windows
-include $(BUILD_HOST_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := liblog
-LOCAL_WHOLE_STATIC_LIBRARIES := liblog
-LOCAL_LDLIBS_linux := -lrt
-LOCAL_MULTILIB := both
-LOCAL_CXX_STL := none
-LOCAL_MODULE_HOST_OS := darwin linux windows
-include $(BUILD_HOST_SHARED_LIBRARY)
-
-
-# Shared and static library for target
+# Static library for target
 # ========================================================
 include $(CLEAR_VARS)
 LOCAL_MODULE := liblog
 LOCAL_SRC_FILES := $(liblog_target_sources)
-LOCAL_CFLAGS := -Werror $(liblog_cflags)
+LOCAL_CFLAGS := $(liblog_cflags)
+
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/../include
+
 # AddressSanitizer runtime library depends on liblog.
 LOCAL_SANITIZE := never
 include $(BUILD_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := liblog
-LOCAL_WHOLE_STATIC_LIBRARIES := liblog
-LOCAL_CFLAGS := -Werror $(liblog_cflags)
-
-# TODO: This is to work around b/24465209. Remove after root cause is fixed
-LOCAL_LDFLAGS_arm := -Wl,--hash-style=both
-
-LOCAL_SANITIZE := never
-LOCAL_CXX_STL := none
-
-include $(BUILD_SHARED_LIBRARY)
 
 include $(call first-makefiles-under,$(LOCAL_PATH))
