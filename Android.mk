@@ -12,7 +12,9 @@ LOCAL_MODULE := zipalign
 LOCAL_SRC_FILES := \
 	ZipAlign.cpp \
 	ZipEntry.cpp \
-	ZipFile.cpp
+	ZipFile.cpp \
+	system_properties.cpp
+# add system_properties from bionic to satisfy linkage to liblog
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/include \
