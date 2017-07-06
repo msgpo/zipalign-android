@@ -167,7 +167,7 @@ protected:
      * Initialize the structure with the contents of a ZipEntry from
      * another file.
      */
-    status_t initFromExternal(const ZipFile* pZipFile, const ZipEntry* pEntry);
+    status_t initFromExternal(const ZipEntry* pEntry);
 
     /*
      * Add some pad bytes to the LFH.  We do this by adding or resizing
@@ -290,7 +290,7 @@ private:
             mExtraField(NULL),
             mFileComment(NULL)
         {}
-        virtual ~CentralDirEntry(void) {
+        ~CentralDirEntry(void) {
             delete[] mFileName;
             delete[] mExtraField;
             delete[] mFileComment;

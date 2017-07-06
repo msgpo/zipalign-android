@@ -23,10 +23,11 @@
 #include "ZipEntry.h"
 #include <utils/Log.h>
 
-#include <stdio.h>
-#include <string.h>
 #include <assert.h>
 #include <inttypes.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
 
 using namespace android;
 
@@ -130,6 +131,7 @@ void ZipEntry::initNew(const char* fileName, const char* comment)
     if (mCDE.mFileCommentLength > 0) {
         /* TODO: stop assuming null-terminated ASCII here? */
         mCDE.mFileComment = new uint8_t[mCDE.mFileCommentLength+1];
+        assert(comment != NULL);
         strcpy((char*) mCDE.mFileComment, comment);
     }
 
@@ -142,8 +144,7 @@ void ZipEntry::initNew(const char* fileName, const char* comment)
  *
  * Initializes the CDE and the LFH.
  */
-status_t ZipEntry::initFromExternal(const ZipFile* pZipFile,
-    const ZipEntry* pEntry)
+status_t ZipEntry::initFromExternal(const ZipEntry* pEntry)
 {
     /*
      * Copy everything in the CDE over, then fix up the hairy bits.
