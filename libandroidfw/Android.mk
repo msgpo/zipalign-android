@@ -54,7 +54,7 @@ LOCAL_SHARED_LIBRARIES := \
     libutils \
     libz
 
-LOCAL_CFLAGS += -std=gnu++11 -Wunused -Wunreachable-code
+LOCAL_CFLAGS += -std=gnu++11 -w
 
 include $(BUILD_STATIC_LIBRARY)
 

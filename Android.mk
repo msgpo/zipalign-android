@@ -30,6 +30,8 @@ LOCAL_LDFLAGS += \
 	$(LOCAL_PATH)/obj/local/armeabi/libz.a  \
 	$(LOCAL_PATH)/obj/local/armeabi/libzopfli.a
 
-LOCAL_CFLAGS += -std=gnu++11
+LOCAL_CFLAGS += -std=gnu++11 -w
 LOCAL_LDFLAGS += -static
+LOCAL_LDLIBS := -latomic
+
 include $(BUILD_EXECUTABLE)

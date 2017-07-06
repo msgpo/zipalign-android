@@ -14,8 +14,8 @@ esac;
 if [ ! "$NDK_ROOT" ]; then
   NDK_ROOT=~/android/android-ndk-r*;
 fi;
-if [ ! "$NDK_TOOLCHAIN" ]; then
-  NDK_TOOLCHAIN=arm-linux-androideabi-4.9;
+if [ ! "$NDK_TOOLCHAIN_VERSION" ]; then
+  NDK_TOOLCHAIN_VERSION=clang;
 fi;
 if [ ! "$APP_ABI" ]; then
   APP_ABI=armeabi;
@@ -26,14 +26,20 @@ fi;
 
 for i in libandroidfw libcutils liblog libutils zlib zopfli; do
   cd $i;
-  if [ "$i" == libandroidfw ]; then
-    # CursorWindow appears to require a different STL; compile it first so its object can be used later
-    $NDK_ROOT/ndk-build$ext NDK_PROJECT_PATH=. NDK_OUT=../obj NDK_LIBS_OUT=../libs APP_BUILD_SCRIPT=./CursorWindowHack.mk NDK_TOOLCHAIN=$NDK_TOOLCHAIN APP_ABI=$APP_ABI APP_PLATFORM=$APP_PLATFORM APP_STL=c++_static;
-  fi;
-  $NDK_ROOT/ndk-build$ext NDK_PROJECT_PATH=. NDK_OUT=../obj NDK_LIBS_OUT=../libs APP_BUILD_SCRIPT=./Android.mk NDK_TOOLCHAIN=$NDK_TOOLCHAIN APP_ABI=$APP_ABI APP_PLATFORM=$APP_PLATFORM APP_STL=gnustl_static;
+  case $i in
+    libandroidfw)
+      # CursorWindow appears to require a different STL; compile it first so its object can be used later
+      $NDK_ROOT/ndk-build$ext NDK_PROJECT_PATH=. NDK_OUT=../obj NDK_LIBS_OUT=../libs APP_BUILD_SCRIPT=./CursorWindowHack.mk NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION APP_ABI=$APP_ABI APP_PLATFORM=$APP_PLATFORM APP_STL=c++_static;
+    ;;
+    libcutils)
+      # sockets requires a LOCAL_CFLAGS += -std=gnu++11 with clang; compile it first so its object can be used later
+      $NDK_ROOT/ndk-build$ext NDK_PROJECT_PATH=. NDK_OUT=../obj NDK_LIBS_OUT=../libs APP_BUILD_SCRIPT=./socketsHack.mk NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION APP_ABI=$APP_ABI APP_PLATFORM=$APP_PLATFORM APP_STL=c++_static;
+    ;;
+  esac;
+  $NDK_ROOT/ndk-build$ext NDK_PROJECT_PATH=. NDK_OUT=../obj NDK_LIBS_OUT=../libs APP_BUILD_SCRIPT=./Android.mk NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION APP_ABI=$APP_ABI APP_PLATFORM=$APP_PLATFORM APP_STL=gnustl_static;
   cd ..;
 done;
 
-$NDK_ROOT/ndk-build$ext NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_TOOLCHAIN=$NDK_TOOLCHAIN APP_ABI=$APP_ABI APP_PLATFORM=$APP_PLATFORM APP_STL=gnustl_static;
+$NDK_ROOT/ndk-build$ext NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION APP_ABI=$APP_ABI APP_PLATFORM=$APP_PLATFORM APP_STL=gnustl_static;
 exit 0;
 

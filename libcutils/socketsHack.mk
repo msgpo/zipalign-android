@@ -17,37 +17,13 @@ LOCAL_PATH := $(my-dir)
 include $(CLEAR_VARS)
 
 libcutils_common_sources := \
-        atomic.c.arm \
-        config_utils.c \
-        fs_config.c \
-        hashmap.c \
-        iosched_policy.c \
-        load_file.c \
-        native_handle.c \
-        open_memstream.c \
-        process_name.c \
-        record_stream.c \
-        sched_policy.c \
-        sockets.cpp \
-        strdup16to8.c \
-        strdup8to16.c \
-        strlcpy.c \
-        threads.c \
+        sockets.cpp
 
 # some files must not be compiled when building against Mingw
 # they correspond to features not used by our host development tools
 # which are also hard or even impossible to port to native Win32
 libcutils_nonwindows_sources := \
-        fs.c \
-        multiuser.c \
-        socket_inaddr_any_server_unix.c \
-        socket_local_client_unix.c \
-        socket_local_server_unix.c \
-        socket_loopback_client_unix.c \
-        socket_loopback_server_unix.c \
-        socket_network_client_unix.c \
-        sockets_unix.cpp \
-        str_parms.c \
+        sockets_unix.cpp
 
 # Static library for target
 # ========================================================
@@ -56,15 +32,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libcutils
 LOCAL_SRC_FILES := $(libcutils_common_sources) \
         $(libcutils_nonwindows_sources) \
-        android_reboot.c \
-        ashmem-dev.c \
-        debugger.c \
-        klog.c \
-        partition_utils.c \
-        properties.c \
-        qtaguid.c \
-        trace-dev.c \
-        uevent.c \
 
 LOCAL_SRC_FILES_arm += arch-arm/memset32.S
 LOCAL_SRC_FILES_arm64 += arch-arm64/android_memset.S
@@ -87,7 +54,7 @@ LOCAL_STATIC_LIBRARIES := liblog
 ifneq ($(ENABLE_CPUSETS),)
 LOCAL_CFLAGS += -DUSE_CPUSETS
 endif
-LOCAL_CFLAGS += -std=gnu90
+LOCAL_CFLAGS += -Wall -Wextra -std=gnu++11
 LOCAL_CLANG := true
 LOCAL_SANITIZE := integer
 include $(BUILD_STATIC_LIBRARY)
