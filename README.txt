@@ -1,12 +1,13 @@
 zipalign -- zip archive alignment tool
 
-usage: zipalign [-f] [-v] <align> infile.zip outfile.zip
-       zipalign -c [-v] <align> infile.zip
+usage: zipalign [-f] [-p] [-v] [-z] <align> infile.zip outfile.zip
+       zipalign -c [-p] [-v] <align> infile.zip
 
   -c : check alignment only (does not modify file)
   -f : overwrite existing outfile.zip
-  -p : page align stored shared object files
+  -p : memory page alignment for stored shared object files
   -v : verbose output
+  -z : recompress using Zopfli
   <align> is in bytes, e.g. "4" provides 32-bit alignment
   infile.zip is an existing Zip archive
   outfile.zip will be created
@@ -37,4 +38,8 @@ You can use the "-c" flag to test whether a zip archive is properly aligned.
 The "-p" flag aligns any file with a ".so" extension, and which is stored
 uncompressed in the zip archive, to a 4096-byte page boundary.  This
 facilitates directly loading shared libraries from inside a zip archive.
+
+Adding the "-z" option will Zopfli-recompress all compressed files within
+the zip archive.  Zopfli provides compression roughly 5% better than zlib,
+while remaining completely compatible with zlib decoders.
 
