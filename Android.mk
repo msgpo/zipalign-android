@@ -23,12 +23,12 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/zopfli/src/zopfli
 
 LOCAL_LDFLAGS += \
-	$(LOCAL_PATH)/obj/local/armeabi/libandroidfw.a \
-	$(LOCAL_PATH)/obj/local/armeabi/libutils.a \
-	$(LOCAL_PATH)/obj/local/armeabi/libcutils.a \
-	$(LOCAL_PATH)/obj/local/armeabi/liblog.a  \
-	$(LOCAL_PATH)/obj/local/armeabi/libz.a  \
-	$(LOCAL_PATH)/obj/local/armeabi/libzopfli.a
+	$(LOCAL_PATH)/obj/local/$(APP_ABI)/libandroidfw.a \
+	$(LOCAL_PATH)/obj/local/$(APP_ABI)/libutils.a \
+	$(LOCAL_PATH)/obj/local/$(APP_ABI)/libcutils.a \
+	$(LOCAL_PATH)/obj/local/$(APP_ABI)/liblog.a  \
+	$(LOCAL_PATH)/obj/local/$(APP_ABI)/libz.a  \
+	$(LOCAL_PATH)/obj/local/$(APP_ABI)/libzopfli.a
 
 LOCAL_CFLAGS += -std=gnu++11 -w
 LOCAL_LDFLAGS += -static
