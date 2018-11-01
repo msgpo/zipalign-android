@@ -121,7 +121,7 @@ status_t ZipFile::open(const char* zipFileName, int flags)
          * have a need for empty zip files.)
          */
         mNeedCDRewrite = true;
-        result = NO_ERROR;
+        result = OK;
     }
 
     if (flags & kOpenReadOnly)
@@ -206,7 +206,7 @@ void ZipFile::discardEntries(void)
  */
 status_t ZipFile::readCentralDir(void)
 {
-    status_t result = NO_ERROR;
+    status_t result = OK;
     uint8_t* buf = NULL;
     off_t fileLength, seekStart;
     long readAmount;
@@ -268,7 +268,7 @@ status_t ZipFile::readCentralDir(void)
 
     /* extract eocd values */
     result = mEOCD.readBuf(buf + i, readAmount - i);
-    if (result != NO_ERROR) {
+    if (result != OK) {
         ALOGD("Failure reading %ld bytes of EOCD values", readAmount - i);
         goto bail;
     }
@@ -312,7 +312,7 @@ status_t ZipFile::readCentralDir(void)
         ZipEntry* pEntry = new ZipEntry;
 
         result = pEntry->initFromCDE(mZipFp);
-        if (result != NO_ERROR) {
+        if (result != OK) {
             ALOGD("initFromCDE failed\n");
             delete pEntry;
             goto bail;
@@ -362,7 +362,7 @@ status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
     const char* storageName, int compressionMethod, ZipEntry** ppEntry)
 {
     ZipEntry* pEntry = NULL;
-    status_t result = NO_ERROR;
+    status_t result = OK;
     long lfhPosn, startPosn, endPosn, uncompressedLen;
     FILE* inputFp = NULL;
     uint32_t crc;
@@ -416,7 +416,7 @@ status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
     if (compressionMethod == ZipEntry::kCompressDeflated) {
         bool failed = false;
         result = compressFpToFp(mZipFp, inputFp, data, size, &crc);
-        if (result != NO_ERROR) {
+        if (result != OK) {
             ALOGD("compression failed, storing\n");
             failed = true;
         } else {
@@ -448,7 +448,7 @@ status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
         } else {
             result = copyDataToFp(mZipFp, data, size, &crc);
         }
-        if (result != NO_ERROR) {
+        if (result != OK) {
             // don't need to truncate; happens in CDE rewrite
             ALOGD("failed copying data in\n");
             goto bail;
@@ -536,11 +536,11 @@ status_t ZipFile::add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
     }
 
     result = pEntry->initFromExternal(pSourceEntry);
-    if (result != NO_ERROR)
+    if (result != OK)
         goto bail;
     if (padding != 0) {
         result = pEntry->addPadding(padding);
-        if (result != NO_ERROR)
+        if (result != OK)
             goto bail;
     }
 
@@ -575,7 +575,7 @@ status_t ZipFile::add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
         copyLen += ZipEntry::kDataDescriptorLen;
 
     if (copyPartialFpToFp(mZipFp, pSourceZip->mZipFp, copyLen, NULL)
-        != NO_ERROR)
+        != OK)
     {
         ALOGW("copy of '%s' failed\n", pEntry->mCDE.mFileName);
         result = UNKNOWN_ERROR;
@@ -604,7 +604,7 @@ status_t ZipFile::add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
         *ppEntry = pEntry;
     pEntry = NULL;
 
-    result = NO_ERROR;
+    result = OK;
 
 bail:
     delete pEntry;
@@ -643,7 +643,7 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
     }
 
     result = pEntry->initFromExternal(pSourceEntry);
-    if (result != NO_ERROR)
+    if (result != OK)
         goto bail;
 
     /*
@@ -683,7 +683,7 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
         }
         long startPosn = ftell(mZipFp);
         uint32_t crc;
-        if (compressFpToFp(mZipFp, NULL, buf, uncompressedLen, &crc) != NO_ERROR) {
+        if (compressFpToFp(mZipFp, NULL, buf, uncompressedLen, &crc) != OK) {
             ALOGW("recompress of '%s' failed\n", pEntry->mCDE.mFileName);
             result = UNKNOWN_ERROR;
             free(buf);
@@ -700,7 +700,7 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
             copyLen += ZipEntry::kDataDescriptorLen;
 
         if (copyPartialFpToFp(mZipFp, pSourceZip->mZipFp, copyLen, NULL)
-            != NO_ERROR)
+            != OK)
         {
             ALOGW("copy of '%s' failed\n", pEntry->mCDE.mFileName);
             result = UNKNOWN_ERROR;
@@ -739,7 +739,7 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
         *ppEntry = pEntry;
     pEntry = NULL;
 
-    result = NO_ERROR;
+    result = OK;
 
 bail:
     delete pEntry;
@@ -774,7 +774,7 @@ status_t ZipFile::copyFpToFp(FILE* dstFp, FILE* srcFp, uint32_t* pCRC32)
         }
     }
 
-    return NO_ERROR;
+    return OK;
 }
 
 /*
@@ -785,8 +785,6 @@ status_t ZipFile::copyFpToFp(FILE* dstFp, FILE* srcFp, uint32_t* pCRC32)
 status_t ZipFile::copyDataToFp(FILE* dstFp,
     const void* data, size_t size, uint32_t* pCRC32)
 {
-    size_t count;
-
     *pCRC32 = crc32(0L, Z_NULL, 0);
     if (size > 0) {
         *pCRC32 = crc32(*pCRC32, (const unsigned char*)data, size);
@@ -796,7 +794,7 @@ status_t ZipFile::copyDataToFp(FILE* dstFp,
         }
     }
 
-    return NO_ERROR;
+    return OK;
 }
 
 /*
@@ -807,7 +805,7 @@ status_t ZipFile::copyDataToFp(FILE* dstFp,
  * On exit, "srcFp" will be seeked to the end of the file, and "dstFp"
  * will be seeked immediately past the data just written.
  */
-status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
+status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, size_t length,
     uint32_t* pCRC32)
 {
     uint8_t tmpBuf[32768];
@@ -817,14 +815,14 @@ status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
         *pCRC32 = crc32(0L, Z_NULL, 0);
 
     while (length) {
-        long readSize;
+        size_t readSize;
 
         readSize = sizeof(tmpBuf);
         if (readSize > length)
             readSize = length;
 
         count = fread(tmpBuf, 1, readSize, srcFp);
-        if ((long) count != readSize) {     // error or unexpected EOF
+        if (count != readSize) {     // error or unexpected EOF
             ALOGD("fread %d bytes failed\n", (int) readSize);
             return UNKNOWN_ERROR;
         }
@@ -840,7 +838,7 @@ status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
         length -= readSize;
     }
 
-    return NO_ERROR;
+    return OK;
 }
 
 /*
@@ -852,7 +850,7 @@ status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
 status_t ZipFile::compressFpToFp(FILE* dstFp, FILE* srcFp,
     const void* data, size_t size, uint32_t* pCRC32)
 {
-    status_t result = NO_ERROR;
+    status_t result = OK;
     const size_t kBufSize = 1024 * 1024;
     uint8_t* inBuf = NULL;
     uint8_t* outBuf = NULL;
@@ -936,7 +934,7 @@ status_t ZipFile::remove(ZipEntry* pEntry)
     /* mark entry as deleted, and mark archive as dirty */
     pEntry->setDeleted();
     mNeedCDRewrite = true;
-    return NO_ERROR;
+    return OK;
 }
 
 /*
@@ -947,19 +945,19 @@ status_t ZipFile::remove(ZipEntry* pEntry)
  */
 status_t ZipFile::flush(void)
 {
-    status_t result = NO_ERROR;
+    status_t result = OK;
     long eocdPosn;
     int i, count;
 
     if (mReadOnly)
         return INVALID_OPERATION;
     if (!mNeedCDRewrite)
-        return NO_ERROR;
+        return OK;
 
     assert(mZipFp != NULL);
 
     result = crunchArchive();
-    if (result != NO_ERROR)
+    if (result != OK)
         return result;
 
     if (fseek(mZipFp, mEOCD.mCentralDirOffset, SEEK_SET) != 0)
@@ -989,7 +987,7 @@ status_t ZipFile::flush(void)
     /* should we clear the "newly added" flag in all entries now? */
 
     mNeedCDRewrite = false;
-    return NO_ERROR;
+    return OK;
 }
 
 /*
@@ -1000,7 +998,7 @@ status_t ZipFile::flush(void)
  */
 status_t ZipFile::crunchArchive(void)
 {
-    status_t result = NO_ERROR;
+    status_t result = OK;
     int i, count;
     long delCount, adjust;
 
@@ -1068,7 +1066,7 @@ status_t ZipFile::crunchArchive(void)
             //    pEntry->getFileName(), adjust);
             result = filemove(mZipFp, pEntry->getLFHOffset() - adjust,
                         pEntry->getLFHOffset(), span);
-            if (result != NO_ERROR) {
+            if (result != OK) {
                 /* this is why you use a temp file */
                 ALOGE("error during crunch - archive is toast\n");
                 return result;
@@ -1100,7 +1098,7 @@ status_t ZipFile::crunchArchive(void)
 status_t ZipFile::filemove(FILE* fp, off_t dst, off_t src, size_t n)
 {
     if (dst == src || n <= 0)
-        return NO_ERROR;
+        return OK;
 
     uint8_t readBuf[32768];
 
@@ -1143,7 +1141,7 @@ status_t ZipFile::filemove(FILE* fp, off_t dst, off_t src, size_t n)
         return UNKNOWN_ERROR;
     }
 
-    return NO_ERROR;
+    return OK;
 }
 
 
@@ -1243,8 +1241,8 @@ void* ZipFile::uncompress(const ZipEntry* entry) const
             if (!ZipUtils::inflateToBuffer(mZipFp, buf, unlen, clen)) {
                 goto bail;
             }
-            }
             break;
+        }
         default:
             goto bail;
     }
@@ -1304,7 +1302,7 @@ status_t ZipFile::EndOfCentralDir::readBuf(const uint8_t* buf, int len)
         memcpy(mComment, buf + kEOCDLen, mCommentLen);
     }
 
-    return NO_ERROR;
+    return OK;
 }
 
 /*
@@ -1331,7 +1329,7 @@ status_t ZipFile::EndOfCentralDir::write(FILE* fp)
             return UNKNOWN_ERROR;
     }
 
-    return NO_ERROR;
+    return OK;
 }
 
 /*
