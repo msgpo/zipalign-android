@@ -12,7 +12,7 @@ case $1 in
 esac;
 
 if [ ! "$NDK_ROOT" ]; then
-  NDK_ROOT=~/android/android-ndk-r*;
+  NDK_ROOT=$(echo ~/android/android-ndk-r* | cut -d\  -f1);
 fi;
 if [ ! "$NDK_TOOLCHAIN_VERSION" ]; then
   NDK_TOOLCHAIN_VERSION=clang;
