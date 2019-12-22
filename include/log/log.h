@@ -527,23 +527,6 @@ typedef enum {
         (void) __android_log_bswrite(_tag, _value);
 #endif
 
-typedef enum log_id {
-    LOG_ID_MIN = 0,
-
-#ifndef LINT_RLOG
-    LOG_ID_MAIN = 0,
-#endif
-    LOG_ID_RADIO = 1,
-#ifndef LINT_RLOG
-    LOG_ID_EVENTS = 2,
-    LOG_ID_SYSTEM = 3,
-    LOG_ID_CRASH = 4,
-    LOG_ID_SECURITY = 5,
-    LOG_ID_KERNEL = 6, /* place last, third-parties can not use it */
-#endif
-
-    LOG_ID_MAX
-} log_id_t;
 #define sizeof_log_id_t sizeof(typeof_log_id_t)
 #define typeof_log_id_t unsigned char
 
