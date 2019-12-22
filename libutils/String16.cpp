@@ -18,6 +18,7 @@
 
 #include <utils/Log.h>
 #include <utils/Unicode.h>
+#include <utils/String8.h>
 #include <utils/threads.h>
 
 #include <memory.h>
